@@ -70,3 +70,12 @@ Los archivos originales están empaquetados dentro de la aplicación. La caché 
 - `app.js`: navegación, herramientas, sonido y almacenamiento.
 - `manifest.webmanifest` y `sw.js`: PWA y funcionamiento offline.
 - `assets/originales/`: materiales de la carpeta fuente.
+
+
+## Actualización visual ASTR4
+- Identidad futurista negra y violeta basada en la onda de partículas suministrada.
+- 999 lecciones por academia (1.998 en total), con buscador y progreso.
+- Biblioteca de apuntes con enlaces directos a los cinco PDF originales.
+- Apartado independiente de actividades que abre las herramientas HTML originales.
+- Piano adaptable al ancho móvil y audio activado mediante eventos táctiles compatibles con Safari/Web Audio.
+- Navegación de seis secciones y ajustes de áreas seguras de iOS.
