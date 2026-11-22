@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#100d18"><meta name="description" content="ASTR4: academia de teoría musical, piano y producción musical.">
+  <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="ASTR4">
+  <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css"><title>ASTR4 · Music Academy</title>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar"><a class="brand" href="#inicio" aria-label="ASTR4 inicio"><span class="brand-mark">A</span><span>ASTR<span class="brand-four">4</span><small>MUSIC ACADEMY</small></span></a><button class="icon-btn" id="themeBtn" aria-label="Cambiar tema" title="Cambiar tema">◐</button></header>
+  <main id="view" tabindex="-1"></main>
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button data-route="inicio" class="nav-item active"><span>⌂</span><small>Inicio</small></button>
+    <button data-route="academia" class="nav-item"><span>▤</span><small>Academia</small></button>
+    <button data-route="apuntes" class="nav-item"><span>▧</span><small>Apuntes</small></button>
+    <button data-route="laboratorio" class="nav-item"><span>⌘</span><small>Laboratorio</small></button>
+    <button data-route="progreso" class="nav-item"><span>◷</span><small>Progreso</small></button>
+  </nav>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script><script src="curriculum.js"></script><script src="app.js"></script>
+</body></html>

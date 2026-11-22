@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Constructor de progresiones</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--bl:#185fa5;--bb:#e6f1fb;--wa:#ba7517;--wb:#faeeda;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}.mu{color:var(--mu);font-size:14px}
+button,select{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.c{border-width:2px}.c.c1{background:var(--ob);color:var(--ok);border-color:var(--ok)}.c.c2{background:var(--bb);color:var(--bl);border-color:var(--bl)}.c.c3{background:var(--wb);color:var(--wa);border-color:var(--wa)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.s{min-height:76px;border:2px dashed var(--bd);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;cursor:pointer;background:var(--cd)}
+.s small{font-weight:400;color:var(--mu)}.s.on{outline:3px solid var(--ac)}
+.fb{padding:12px 14px;border-radius:10px;background:var(--cd);margin:10px 0}
+svg text{fill:var(--mu);font-size:11px}
+</style></head><body><div id="app">
+<h1>Constructor de progresiones</h1>
+<p class="mu">Pulsa grados para llenar los 4 huecos. Verde es casa, azul es salida y naranja es tensión. Toca un hueco para vaciarlo.</p>
+<div class="row"><select id="key" aria-label="Tonalidad"></select><button id="bM">Mayor</button><button id="bm">Menor</button><button id="rn">Sorpréndeme</button></div>
+<div class="row" id="deg"></div>
+<div class="g4" id="sl"></div>
+<svg id="cv" viewBox="0 0 400 120" width="100%" role="img" aria-label="Curva de tensión de la progresión"></svg>
+<div class="fb" id="msg"></div>
+<div class="row"><button class="pr" id="pl">Escuchar</button><button id="cl">Vaciar</button></div>
+<script>
+const N=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],nn=p=>N[((p%12)+12)%12];
+const IN={M:[0,4,7],m:[0,3,7],d:[0,3,6]},SU={M:'',m:' menor',d:' dism.'};
+const D={M:[['I','M',0,1,0],['ii','m',2,2,2],['iii','m',4,1,1],['IV','M',5,2,2],['V','M',7,3,3],['vi','m',9,1,1],['vii°','d',11,3,4]],
+m:[['i','m',0,1,0],['ii°','d',2,2,2],['III','M',3,1,1],['iv','m',5,2,2],['v','m',7,3,2],['V','M',7,3,3],['VI','M',8,1,1],['VII','M',10,2,2]]};
+const P={M:[[0,4,5,3],[5,3,0,4],[0,5,3,4],[1,4,0,0],[0,3,4,0]],m:[[0,6,2,7],[0,7,6,5],[0,3,7,2],[0,6,4,0]]};
+const RN={1:'Casa',2:'Salida',3:'Tensión'};
+let md='M',sl=[null,null,null,null],ptr=0,ctx=null,tm=[];
+const $=i=>document.getElementById(i);
+const K=$('key');N.forEach((n,i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;K.appendChild(o)});K.onchange=draw;
+$('bM').onclick=()=>{md='M';sl=[null,null,null,null];ptr=0;draw()};$('bm').onclick=()=>{md='m';sl=[null,null,null,null];ptr=0;draw()};
+$('cl').onclick=()=>{sl=[null,null,null,null];ptr=0;draw()};
+$('rn').onclick=()=>{sl=pick(P[md]).slice();ptr=0;draw();play()};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const ch=i=>{const d=D[md][i],r=(+K.value+d[2])%12;return {r,q:d[1],n:nn(r)+SU[d[1]],d}};
+function draw(){
+$('bM').className=md==='M'?'pr':'';$('bm').className=md==='m'?'pr':'';
+let h='';D[md].forEach((d,i)=>{const c=ch(i);h+=`<button class="c c${d[3]}" onclick="add(${i})">${d[0]}<br><small>${c.n}</small></button>`});$('deg').innerHTML=h;
+h='';sl.forEach((v,i)=>{h+=`<div class="s" id="s${i}" onclick="clr(${i})">${v==null?'<small>vacío</small>':`${D[md][v][0]}<small>${ch(v).n}</small>`}</div>`});$('sl').innerHTML=h;
+let s='<line x1="30" y1="100" x2="370" y2="100" stroke="currentColor" opacity=".2"/>',pts=[];
+sl.forEach((v,i)=>{if(v==null)return;const x=60+i*93,y=100-D[md][v][4]*20;pts.push(x+','+y);});
+if(pts.length>1)s+=`<polyline points="${pts.join(' ')}" fill="none" stroke="var(--ac)" stroke-width="2.5"/>`;
+sl.forEach((v,i)=>{if(v==null)return;const x=60+i*93,y=100-D[md][v][4]*20,c=['','--ok','--bl','--wa'][D[md][v][3]];s+=`<circle cx="${x}" cy="${y}" r="7" fill="var(${c})"/><text x="${x}" y="116" text-anchor="middle">${D[md][v][0]}</text>`});
+s+='<text x="4" y="104">0</text><text x="4" y="24">tensión</text>';$('cv').innerHTML=s;
+const f=sl.filter(v=>v!=null);let m='';
+if(!f.length)m='Elige un grado para empezar.';
+else if(f.length<4)m=`Llevas ${f.length} de 4 acordes. Faltan ${4-f.length}.`;
+else{const l=D[md][f[3]][3],a=D[md][f[0]][3];m=(a===1?'Empieza en casa, buen punto de partida. ':'No empieza en casa: crea intriga desde el primer acorde. ')+(l===1?'Termina en casa: el bucle descansa al cerrarse.':l===2?'Termina en salida: suena abierto y sigue girando.':'Termina en tensión: pide volver al principio y el bucle gira con ganas.')}
+$('msg').textContent=m}
+function add(i){sl[ptr]=i;ptr=(ptr+1)%4;draw();ctxo();tone(ch(i),0,1)}
+function clr(i){sl[i]=null;ptr=i;draw()}
+function ctxo(){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume()}catch(e){}}
+const mf=m=>440*Math.pow(2,(m-69)/12);
+function tone(c,t,d){if(!ctx)return;const t0=ctx.currentTime+.05+t;IN[c.q].forEach(i=>o(mf(60+(c.r+i)%12),t0,d,'triangle',.12));o(mf(36+c.r),t0,d,'sine',.22)}
+function o(f,t,d,y,g){const a=ctx.createOscillator(),v=ctx.createGain();a.type=y;a.frequency.value=f;v.gain.setValueAtTime(.0001,t);v.gain.linearRampToValueAtTime(g,t+.03);v.gain.exponentialRampToValueAtTime(.0001,t+d);a.connect(v);v.connect(ctx.destination);a.start(t);a.stop(t+d+.05)}
+function play(){ctxo();tm.forEach(clearTimeout);tm=[];document.querySelectorAll('.s').forEach(e=>e.classList.remove('on'));
+sl.forEach((v,i)=>{if(v==null)return;tone(ch(v),i*1.2,1.15);tm.push(setTimeout(()=>{document.querySelectorAll('.s').forEach((e,j)=>e.classList.toggle('on',j===i))},i*1200))});
+tm.push(setTimeout(()=>document.querySelectorAll('.s').forEach(e=>e.classList.remove('on')),4800))}
+$('pl').onclick=play;draw();
+</script></div></body></html>

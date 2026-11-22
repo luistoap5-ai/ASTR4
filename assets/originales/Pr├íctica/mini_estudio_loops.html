@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mini estudio de loops</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--wa:#ba7517;--wb:#faeeda;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--wa:#ef9f27;--wb:#412402;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--wa:#ef9f27;--wb:#412402;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:16px;margin:16px 0 6px}.mu{color:var(--mu);font-size:14px}
+button,select{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+.ch{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ch div{background:var(--cd);border:2px solid var(--bd);border-radius:10px;padding:10px 4px;text-align:center;font-weight:600}
+.ch div.on{border-color:var(--ac);background:var(--ab)}
+.gr{display:grid;grid-template-columns:44px repeat(16,1fr);gap:3px;align-items:center;font-size:12px}
+.gr button{padding:0;height:26px;border-radius:5px}.gr button.on{background:var(--ac);border-color:var(--ac)}
+.gr button.q{border-color:var(--mu)}.gr button.cur{outline:2px solid var(--wa)}
+input[type=range]{width:160px}
+</style></head><body><div id="app">
+<h1>Mini estudio de loops</h1>
+<p class="mu">Elige una progresión, dibuja una batería de 16 pasos y escúchalo todo en bucle. Cada acorde dura un compás.</p>
+<div class="row"><select id="key" aria-label="Tonalidad"></select><select id="pg" aria-label="Progresión"></select></div>
+<div class="ch" id="ch"></div>
+<h2>Batería (16 pasos por compás)</h2>
+<div class="gr" id="gr"></div>
+<div class="row"><select id="pt" aria-label="Plantilla de ritmo"></select><label class="mu">Tempo <input type="range" id="bp" min="70" max="140" value="95"> <b id="bv">95</b> bpm</label></div>
+<div class="row"><button class="pr" id="pl">Reproducir</button><button id="cl">Vaciar batería</button></div>
+<script>
+const N=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],nn=p=>N[((p%12)+12)%12];
+const IN={M:[0,4,7],m:[0,3,7],7:[0,4,7,10],'7M':[0,4,7,11],m7:[0,3,7,10]},SU={M:'',m:' menor',7:'7','7M':'7M',m7:'m7'};
+const PG=[['I – V – vi – IV (pop)',[[0,'M'],[7,'M'],[9,'m'],[5,'M']]],['vi – IV – I – V (triste)',[[9,'m'],[5,'M'],[0,'M'],[7,'M']]],['i – VII – VI – V (andaluza)',[[9,'m'],[7,'M'],[5,'M'],[4,'M']]],['i – VI – III – VII (menor épica)',[[9,'m'],[5,'M'],[0,'M'],[7,'M']]],['ii – V – I (jazz)',[[2,'m7'],[7,'7'],[0,'7M'],[0,'7M']]]];
+const PT={'Cuatro por cuatro':[[0,4,8,12],[4,12],[0,2,4,6,8,10,12,14]],'Caja a contratiempo':[[0,4,8,12],[6,14],[2,6,10,14]],'Pulso suave':[[0,8],[12],[0,4,8,12]],'Vacío':[[],[],[]]};
+const $=i=>document.getElementById(i),R=['Bombo','Caja','Hi-hat'];
+let g=[[],[],[]],ctx=null,iv=null,step=0,nextT=0,key=0,pg=0;
+N.forEach((n,i)=>$('key').add(new Option(n,i)));PG.forEach((p,i)=>$('pg').add(new Option(p[0],i)));Object.keys(PT).forEach(k=>$('pt').add(new Option(k,k)));
+$('key').onchange=()=>{key=+$('key').value;sh()};$('pg').onchange=()=>{pg=+$('pg').value;sh()};
+$('pt').onchange=()=>{g=PT[$('pt').value].map(a=>a.slice());grid()};$('cl').onclick=()=>{g=[[],[],[]];grid()};
+$('bp').oninput=()=>$('bv').textContent=$('bp').value;
+function sh(){$('ch').innerHTML=PG[pg][1].map((c,i)=>`<div id="c${i}">${nn(key+c[0])}${SU[c[1]]}</div>`).join('')}
+function grid(){let h='';R.forEach((r,ri)=>{h+=`<span>${r}</span>`;for(let s=0;s<16;s++)h+=`<button class="${g[ri].includes(s)?'on':''}${s%4===0?' q':''}" onclick="tgl(${ri},${s})" aria-label="${r} paso ${s+1}"></button>`});$('gr').innerHTML=h}
+function tgl(r,s){const i=g[r].indexOf(s);i<0?g[r].push(s):g[r].splice(i,1);grid()}
+const mf=m=>440*Math.pow(2,(m-69)/12);
+function o(f,t,d,y,gn){const a=ctx.createOscillator(),v=ctx.createGain();a.type=y;a.frequency.value=f;v.gain.setValueAtTime(.0001,t);v.gain.linearRampToValueAtTime(gn,t+.03);v.gain.exponentialRampToValueAtTime(.0001,t+d);a.connect(v);v.connect(ctx.destination);a.start(t);a.stop(t+d+.05)}
+function noise(t,d,hp,gn){const b=ctx.createBuffer(1,ctx.sampleRate*d,ctx.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),v=ctx.createGain();s.buffer=b;f.type='highpass';f.frequency.value=hp;v.gain.setValueAtTime(gn,t);v.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(v);v.connect(ctx.destination);s.start(t)}
+function kick(t){const a=ctx.createOscillator(),v=ctx.createGain();a.frequency.setValueAtTime(140,t);a.frequency.exponentialRampToValueAtTime(45,t+.12);v.gain.setValueAtTime(.7,t);v.gain.exponentialRampToValueAtTime(.0001,t+.25);a.connect(v);v.connect(ctx.destination);a.start(t);a.stop(t+.3)}
+function sched(){const sd=60/$('bp').value/4;while(nextT<ctx.currentTime+.12){const s=step%64,b=Math.floor(s/16),k=s%16,c=PG[pg][1][b];
+if(k===0){const d=sd*16*.97;IN[c[1]].forEach(i=>o(mf(60+(key+c[0]+i)%12),nextT,d,'triangle',.1));o(mf(36+(key+c[0])%12),nextT,d,'sine',.2)}
+if(g[0].includes(k))kick(nextT);if(g[1].includes(k))noise(nextT,.15,1500,.35);if(g[2].includes(k))noise(nextT,.05,6000,.2);
+const bb=b,kk=k,tt=nextT;setTimeout(()=>{document.querySelectorAll('.ch div').forEach((e,j)=>e.classList.toggle('on',j===bb&&iv));document.querySelectorAll('.gr button').forEach((e,j)=>e.classList.toggle('cur',iv&&(j%17)-1===kk&&j%17>0))},Math.max(0,(tt-ctx.currentTime)*1000));
+nextT+=sd;step++}}
+$('pl').onclick=()=>{if(iv){clearInterval(iv);iv=null;$('pl').textContent='Reproducir';document.querySelectorAll('.ch div').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.gr button').forEach(e=>e.classList.remove('cur'));return}
+try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume()}catch(e){return}step=0;nextT=ctx.currentTime+.08;iv=setInterval(sched,25);$('pl').textContent='Parar'};
+sh();$('pt').value='Cuatro por cuatro';g=PT['Cuatro por cuatro'].map(a=>a.slice());grid();
+</script></div></body></html>

@@ -1,0 +1,50 @@
+PROGRESIONES DE ACORDES POR GENERO (MIDI)
+
+Todas estan en Do mayor / La menor. Puedes transponerlas a cualquier tonalidad en tu DAW.
+Cada archivo: acordes en piano (voicing suave) + nota grave. Un acorde por compas, 4/4.
+
+POP Y RETRO
+  01 I-V-vi-IV (Do-Sol-Lam-Fa) - alegre  |  100 bpm  |  energia 4/5
+  02 vi-IV-I-V (Lam-Fa-Do-Sol) - triste  |  100 bpm  |  energia 3/5
+  03 I-vi-IV-V (Do-Lam-Fa-Sol) - calmada  |  90 bpm  |  energia 2/5
+
+ROCK, COUNTRY Y FOLK
+  04 I-IV-V-IV (Do-Fa-Sol-Fa) - alegre  |  130 bpm  |  energia 5/5
+  05 I-bVII-IV-I (Do-Sib-Fa-Do) - alegre  |  120 bpm  |  energia 5/5
+  06 i-VII-VI-iv (Lam-Sol-Fa-Rem) - agridulce  |  90 bpm  |  energia 3/5
+  07 I-IV-V-I (Do-Fa-Sol-Do) - alegre  |  110 bpm  |  energia 3/5
+
+BLUES
+  08 12 compases I-IV-V (Do7-Fa7-Sol7) - agridulce  |  90 bpm  |  energia 3/5
+  09 i-iv-i-V (Lam7-Rem7-Lam7-Mi7) - triste  |  80 bpm  |  energia 2/5
+
+JAZZ, NEO-SOUL Y LO-FI
+  10 ii-V-I (Rem7-Sol7-Do7M) - calmada  |  80 bpm  |  energia 2/5
+  11 I-vi-ii-V (Do7M-Lam7-Rem7-Sol7) - calmada  |  85 bpm  |  energia 2/5
+  12 IV-V-iii-vi (Fa7M-Sol7-Mim7-Lam7) - agridulce  |  75 bpm  |  energia 2/5
+  13 iii-vi-ii-V-I (Mim7-Lam7-Rem7-Sol7-Do7M) - calmada  |  80 bpm  |  energia 2/5
+
+LATINA: FLAMENCO, SALSA Y POP LATINO
+  14 i-VII-VI-V (Lam-Sol-Fa-Mi) - dramatica  |  100 bpm  |  energia 4/5
+  15 I-vi-IV-V (Do-Lam-Fa-Sol7) - alegre  |  170 bpm  |  energia 5/5
+
+EDM Y DANCE
+  16 i-VI-III-VII (Lam-Fa-Do-Sol) - agridulce  |  126 bpm  |  energia 5/5
+  17 i-VI-VII (Lam-Fa-Sol) - dramatica  |  126 bpm  |  energia 5/5
+  18 vi-IV-V-I (Lam-Fa-Sol-Do) - alegre  |  128 bpm  |  energia 5/5
+  19 i-III-VII-VI (Lam-Do-Sol-Fa) - agridulce  |  124 bpm  |  energia 5/5
+
+TRAP, HIP-HOP Y R&B OSCURO
+  20 i-v-VI-VII (Lam-Mim-Fa-Sol) - triste  |  140 bpm  |  energia 3/5
+  21 i-VI-v-i (Lam-Fa-Mim-Lam) - dramatica  |  140 bpm  |  energia 3/5
+  22 i-VII-VI-VII (Lam-Sol-Fa-Sol) - dramatica  |  120 bpm  |  energia 3/5
+
+REGGAE Y SKA
+  23 I-IV (Do-Fa-Do-Fa) - calmada  |  75 bpm  |  energia 2/5
+  24 I-IV-V-IV (Do-Fa-Sol-Fa) - alegre  |  120 bpm  |  energia 4/5
+  25 i-IV-i-V (Lam-Re-Lam-Mi) - agridulce  |  70 bpm  |  energia 2/5
+
+CLÁSICA Y CINEMATOGRÁFICA
+  26 I-V-vi-iii-IV-I-IV-V (Do-Sol-Lam-Mim-Fa-Do-Fa-Sol) - calmada  |  70 bpm  |  energia 2/5
+  27 i-VI-III-VII (Lam-Fa-Do-Sol) - dramatica  |  80 bpm  |  energia 4/5
+  28 VI-VII-i (Fa-Sol-Lam) - dramatica  |  90 bpm  |  energia 4/5

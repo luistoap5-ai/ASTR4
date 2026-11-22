@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratorio de mezcla</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--no:#993c1d;--nb:#faece7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:26px 0 6px}.mu{color:var(--mu);font-size:14px}
+button,input[type=number]{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer}
+input[type=number]{cursor:text;width:90px}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+input[type=range]{width:100%}
+.bands{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:10px 0 4px;position:relative}
+.bands div{display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--fg);border-right:1px solid var(--bg)}
+.mk{position:absolute;top:0;bottom:0;width:3px;background:var(--fg)}
+.fb{padding:12px 14px;border-radius:10px;background:var(--cd);margin:10px 0}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.opts button.g{background:var(--ob);color:var(--ok);border-color:var(--ok)}.opts button.r{background:var(--nb);color:var(--no);border-color:var(--no)}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:left}
+</style></head><body><div id="app">
+<h1>Laboratorio de mezcla</h1>
+<p class="mu">Baja el volumen antes de empezar. Explora qué se oye en cada zona de frecuencia, ponte a prueba y calcula cuánto te ajustará cada plataforma.</p>
+<h2>1. Explorador de frecuencias</h2>
+<input type="range" id="fr" min="0" max="1000" value="400" aria-label="Frecuencia">
+<div class="bands" id="bd"><span class="mk" id="mk"></span></div>
+<div class="fb"><b id="hz"></b> · <b id="bn"></b><br><span id="ds" class="mu"></span></div>
+<div class="row"><button class="pr" id="tn">Escuchar tono</button></div>
+<h2>2. ¿En qué zona está?</h2>
+<div id="q" class="mu"></div><div class="opts" id="qo"></div><div class="row"><button id="qs">Reproducir otra vez</button><button id="qn">Siguiente</button><span id="qsc" class="mu"></span></div>
+<h2>3. Calculadora de loudness</h2>
+<div class="row"><label>Tu pista: <input type="number" id="lu" value="-9" step="0.5"> LUFS</label></div>
+<table id="tb"></table>
+<p class="mu">Ajuste = objetivo menos tu LUFS. Si es negativo, la plataforma baja tu pista. Apple Music solo baja. El resto de plataformas puede comportarse distinto según sus ajustes.</p>
+<script>
+const B=[['Sub',20,60,'808 y subgraves del bombo. Se siente más que se oye; deja esta zona solo al bajo y al bombo.'],['Graves',60,250,'Cuerpo del bombo, el bajo y la base de voces e instrumentos.'],['Barro',250,450,'Zona turbia donde se acumula la confusión. Recortar aquí limpia la mezcla.'],['Honk',450,1000,'Sonido nasal y de cartón. Demasiado aquí agobia.'],['Presencia',1000,4000,'Claridad e inteligibilidad de la voz y de los instrumentos principales.'],['Sibilancia',4000,10000,'Las eses y los platillos. Si cansa, se ajusta con un de-esser.'],['Aire',10000,20000,'Brillo y apertura. Se añade con una subida suave de agudos.']];
+const C=['#85b7eb','#5dcaa5','#ef9f27','#f0997b','#afa9ec','#ed93b1','#97c459'];
+const $=i=>document.getElementById(i),f2=v=>20*Math.pow(1000,v/1000),L=Math.log(20000/20);
+B.forEach((b,i)=>{const d=document.createElement('div');d.style.width=(Math.log(b[2]/b[1])/L*100)+'%';d.style.background=C[i]+'66';d.textContent=window.innerWidth>480?b[0]:'';$('bd').insertBefore(d,$('mk'))});
+let ctx=null,osc=null,gn=null;
+function band(f){return B.find(b=>f>=b[1]&&f<b[2])||B[6]}
+function upd(){const f=f2(+$('fr').value),b=band(f);$('hz').textContent=(f<1000?Math.round(f)+' Hz':(f/1000).toFixed(1)+' kHz');$('bn').textContent=b[0];$('ds').textContent=b[3];$('mk').style.left=(Math.log(f/20)/L*100)+'%';if(osc)osc.frequency.value=f}
+$('fr').oninput=upd;
+function ac(){ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume()}
+$('tn').onclick=()=>{if(osc){osc.stop();osc=null;$('tn').textContent='Escuchar tono';return}try{ac()}catch(e){return}osc=ctx.createOscillator();gn=ctx.createGain();gn.gain.value=.06;osc.frequency.value=f2(+$('fr').value);osc.connect(gn);gn.connect(ctx.destination);osc.start();$('tn').textContent='Parar'};
+let qf=0,ok=0,tot=0,done=false;
+function beep(f){try{ac()}catch(e){return}const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;g.gain.setValueAtTime(.0001,ctx.currentTime);g.gain.linearRampToValueAtTime(.07,ctx.currentTime+.05);g.gain.setValueAtTime(.07,ctx.currentTime+.9);g.gain.linearRampToValueAtTime(.0001,ctx.currentTime+1.1);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+1.2)}
+function nq(){done=false;const b=B[Math.floor(Math.random()*7)];qf=b[1]*Math.pow(b[2]/b[1],.15+Math.random()*.7);$('q').textContent='Pulsa Reproducir y elige la zona del tono.';$('qo').innerHTML=B.map((x,i)=>`<button onclick="an(${i},this)">${x[0]}</button>`).join('');}
+function an(i,el){if(done)return;done=true;tot++;const r=B.indexOf(band(qf));if(i===r)ok++;const bs=$('qo').children;bs[r].className='g';if(i!==r)el.className='r';$('q').textContent=`Era ${qf<1000?Math.round(qf)+' Hz':(qf/1000).toFixed(1)+' kHz'}: ${B[r][0]} (${B[r][1]}–${B[r][2]} Hz).`;$('qsc').textContent=ok+' de '+tot}
+$('qs').onclick=()=>beep(qf);$('qn').onclick=()=>{nq();beep(qf)};
+const PL=[['Spotify',-14],['YouTube',-14],['Apple Music',-16]];
+function lu(){const v=+$('lu').value;$('tb').innerHTML='<tr><th>Plataforma</th><th>Objetivo</th><th>Ajuste</th></tr>'+PL.map(p=>{const a=p[1]-v;return `<tr><td>${p[0]}</td><td>${p[1]} LUFS</td><td>${a>0?'+':''}${a.toFixed(1)} dB</td></tr>`}).join('')+'<tr><td>TikTok</td><td>sin normalización</td><td>0 dB</td></tr>'}
+$('lu').oninput=lu;upd();nq();lu();
+</script></div></body></html>

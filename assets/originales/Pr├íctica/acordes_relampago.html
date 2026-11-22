@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Acordes relámpago</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--no:#993c1d;--nb:#faece7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}.mu{color:var(--mu);font-size:14px}
+button{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+.big{font-size:44px;font-weight:700;text-align:center;margin:10px 0;min-height:56px}
+.hud{display:flex;justify-content:space-between;font-size:18px;font-weight:600}
+.bar{height:8px;background:var(--cd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);transition:width .25s linear}
+.pn{position:relative;height:150px;margin:14px 0;touch-action:manipulation}
+.k{position:absolute;top:0;padding:0}
+.k.w{width:14.28%;height:100%;background:#fbfaf6;color:#444;border:1px solid var(--bd);border-radius:0 0 6px 6px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:13px}
+.k.b{width:8.4%;height:62%;background:#2c2c2a;border:1px solid #2c2c2a;border-radius:0 0 4px 4px;z-index:2}
+.k.on{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)}
+.k.ok{background:var(--ok)!important;color:#fff!important}.k.no{background:var(--no)!important;color:#fff!important}
+.fb{padding:12px 14px;border-radius:10px;background:var(--cd);margin:10px 0}
+</style></head><body><div id="app">
+<h1>Acordes relámpago</h1>
+<p class="mu">Tienes 60 segundos. Te pido un acorde y lo pulsas en el teclado. Se comprueba solo al completar las notas.</p>
+<div class="row"><button id="l1" class="pr">Fácil: mayor y menor</button><button id="l2">Difícil: con séptima</button><button id="go" class="pr">Empezar</button></div>
+<div class="hud"><span id="sc">Aciertos: 0</span><span id="tm">60 s</span></div>
+<div class="bar"><i id="br" style="width:100%"></i></div>
+<div class="big" id="tg">—</div>
+<div id="pn"></div>
+<div class="fb" id="fb">Pulsa Empezar. Mejor puntuación: <b id="bs">0</b></div>
+<script>
+const N=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],nn=p=>N[((p%12)+12)%12];
+const IN={'':[0,4,7],' menor':[0,3,7],'7M':[0,4,7,11],'m7':[0,3,7,10],'7':[0,4,7,10]};
+const $=i=>document.getElementById(i);
+let lv=1,run=false,sc=0,left=60,sel=new Set(),cur=null,iv=null,ctx=null,best=0,lock=false;
+try{best=+localStorage.getItem('arel')||0}catch(e){}$('bs').textContent=best;
+$('l1').onclick=()=>{lv=1;$('l1').className='pr';$('l2').className=''};
+$('l2').onclick=()=>{lv=2;$('l2').className='pr';$('l1').className=''};
+const W=[0,2,4,5,7,9,11],B={1:1,3:2,6:4,8:5,10:6};
+function pn(st){let h='<div class="pn">';W.forEach((p,i)=>h+=`<button class="k w${cls(p,st)}" style="left:${i*14.28}%" onclick="tg(${p})">${nn(p)}</button>`);Object.keys(B).forEach(p=>h+=`<button class="k b${cls(+p,st)}" style="left:${B[p]*14.28-4.2}%" onclick="tg(${p})"></button>`);$('pn').innerHTML=h+'</div>'}
+function cls(p,st){return st&&cur.p.includes(p)&&st==='no'?' ok':sel.has(p)?(st==='no'&&!cur.p.includes(p)?' no':' on'):''}
+function nxt(){const r=Math.floor(Math.random()*12),ts=lv===1?['','',' menor']:['7M','m7','7'],t=ts[Math.floor(Math.random()*ts.length)];
+cur={n:nn(r)+(t===' menor'?' menor':t),p:IN[t].map(i=>(r+i)%12)};sel=new Set();lock=false;$('tg').textContent=cur.n;pn()}
+function snd(p){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=440*Math.pow(2,(60+p-69)/12);g.gain.setValueAtTime(.0001,ctx.currentTime);g.gain.linearRampToValueAtTime(.15,ctx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.6);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.65)}catch(e){}}
+function tg(p){if(!run||lock)return;sel.has(p)?sel.delete(p):sel.add(p);snd(p);pn();
+if(sel.size===cur.p.length){lock=true;const ok=cur.p.every(x=>sel.has(x));if(ok){sc++;$('sc').textContent='Aciertos: '+sc;$('fb').textContent='Correcto.';setTimeout(nxt,250)}else{pn('no');$('fb').textContent='No era ese. '+cur.n+' = '+cur.p.map(nn).join(' – ');setTimeout(nxt,1400)}}}
+$('go').onclick=()=>{clearInterval(iv);run=true;sc=0;left=60;$('sc').textContent='Aciertos: 0';$('tm').textContent='60 s';$('br').style.width='100%';$('fb').textContent='¡Ya!';nxt();
+iv=setInterval(()=>{left--;$('tm').textContent=left+' s';$('br').style.width=left/60*100+'%';if(left<=0){clearInterval(iv);run=false;$('tg').textContent='Fin';if(sc>best){best=sc;try{localStorage.setItem('arel',best)}catch(e){}}$('bs').textContent=best;$('fb').textContent='Tiempo. Has acertado '+sc+(sc>=best&&sc>0?' (nuevo récord).':'.')}},1000)};
+pn();
+</script></div></body></html>
