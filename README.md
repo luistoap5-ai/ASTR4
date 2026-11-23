@@ -92,3 +92,13 @@ Las diez actividades se abren dentro de ASTR4 mediante un visor integrado. Tambi
 - Guía de flujo de trabajo en Ableton Live y ruta de aprendizaje hasta publicar música.
 - Los nuevos datos se guardan en `astr4-data`, ampliando el esquema sin borrar progreso, favoritos ni notas existentes.
 - Los datos permanecen en el navegador/dispositivo; no hay sincronización automática entre dispositivos.
+
+
+## Actualización mayor v8 — Suite creativa
+
+- Cuaderno creativo para registrar canciones, letras, conceptos, estructuras, tonalidad, BPM, estilo, estado y notas de producción.
+- Planificador semanal con bloques de piano, oído, composición, Ableton y escucha crítica.
+- Retos creativos con seguimiento local para convertir el estudio en loops, letras, arreglos y demos terminadas.
+- Accesos directos desde inicio y navegación inferior a Mi estudio y planificación.
+- Los datos se guardan localmente en el navegador y se incluyen en las copias de seguridad ASTR4.
+- Caché de PWA actualizada a astr4-major-v8 para forzar la renovación de archivos en GitHub Pages.

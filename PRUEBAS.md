@@ -27,3 +27,11 @@
 - Ahora se sirven desde `assets/originales/actividades/` con nombres ASCII estables.
 - Se actualizó la versión de caché del service worker a `astr4-v3`.
 - Se validó que las diez rutas referenciadas existen y que los scripts JavaScript embebidos pasan `node --check`.
+
+
+## Actualización mayor v8
+- Nuevas vistas: `cancionero`, `planificador` y `retos`.
+- Nuevos datos persistentes: canciones, planificación semanal y retos completados.
+- Los formularios, cambios de estado y casillas están conectados al almacenamiento local.
+- Caché de service worker: `astr4-major-v8`.
+- Pendiente de validación visual en Safari/iPhone real.
