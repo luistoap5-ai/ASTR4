@@ -102,3 +102,9 @@ Las diez actividades se abren dentro de ASTR4 mediante un visor integrado. Tambi
 - Accesos directos desde inicio y navegación inferior a Mi estudio y planificación.
 - Los datos se guardan localmente en el navegador y se incluyen en las copias de seguridad ASTR4.
 - Caché de PWA actualizada a astr4-major-v8 para forzar la renovación de archivos en GitHub Pages.
+
+## ASTR4 v9 — Sala de producción
+
+Se incorpora una Sala de producción con cinco etapas de control: preproducción, grabación vocal, mezcla, entrega y lanzamiento. Incluye listas de comprobación persistentes, selector de procesos para una cadena vocal orientativa, bitácora de decisiones de mezcla, ficha de lanzamiento y exportación de un informe `.txt`. Los nuevos datos se guardan en `astr4-data` y se incluyen en la copia JSON general.
+
+La cadena vocal es una guía de trabajo, no una receta universal. El orden y los procesos deben decidirse escuchando la toma y el contexto de la canción. Las recomendaciones de entrega evitan imponer un único objetivo de sonoridad válido para todas las plataformas.
