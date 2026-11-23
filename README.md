@@ -79,3 +79,16 @@ Los archivos originales están empaquetados dentro de la aplicación. La caché 
 - Apartado independiente de actividades que abre las herramientas HTML originales.
 - Piano adaptable al ancho móvil y audio activado mediante eventos táctiles compatibles con Safari/Web Audio.
 - Navegación de seis secciones y ajustes de áreas seguras de iOS.
+
+
+## Actividades interactivas (actualización)
+Las diez actividades se abren dentro de ASTR4 mediante un visor integrado. También tienen un enlace «Abrir aparte». El service worker precarga las diez páginas y ya no sustituye errores de recursos por index.html. Si se publica una actualización, la caché cambia a `astr4-v5-activity-launcher`.
+
+
+## ASTR4 ULTIMATE — espacio de artista-productor
+- Nuevo apartado «Mi estudio» para organizar canciones con nombre, estilo, ambiente, tonalidad, BPM y notas.
+- Rutina diaria con seguimiento de piano, oído, composición, producción y escucha crítica.
+- Registro local de minutos de práctica y sesiones.
+- Guía de flujo de trabajo en Ableton Live y ruta de aprendizaje hasta publicar música.
+- Los nuevos datos se guardan en `astr4-data`, ampliando el esquema sin borrar progreso, favoritos ni notas existentes.
+- Los datos permanecen en el navegador/dispositivo; no hay sincronización automática entre dispositivos.

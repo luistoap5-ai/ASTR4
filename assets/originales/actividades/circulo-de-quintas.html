@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Círculo de quintas interactivo</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--bl:#185fa5;--bb:#e6f1fb;--wa:#ba7517;--wb:#faeeda;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}.mu{color:var(--mu);font-size:14px}
+button{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.fb{padding:12px 14px;border-radius:10px;background:var(--cd);margin:10px 0}
+svg text{font:600 13px system-ui,sans-serif;pointer-events:none}
+.n{cursor:pointer}
+.ch{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
+.ch div{border-radius:8px;padding:8px 2px;text-align:center;font-size:13px;line-height:1.3}
+</style></head><body><div id="app">
+<h1>Círculo de quintas</h1>
+<p class="mu">Toca una tonalidad del anillo exterior. Los 6 acordes menores y mayores de su familia se iluminan: IV, I y V fuera; ii, vi y iii dentro.</p>
+<svg id="w" viewBox="0 0 340 340" width="100%" role="img" aria-label="Círculo de quintas con 12 tonalidades mayores y sus relativas menores"></svg>
+<div class="fb" id="info"></div>
+<div class="ch" id="ch"></div>
+<div class="row"><button class="pr" id="p1">Escuchar I – IV – V – I</button><button id="p2">Escuchar I – vi – IV – V</button></div>
+<script>
+const N=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],nn=p=>N[((p%12)+12)%12];
+const O=[0,7,2,9,4,11,6,1,8,3,10,5],NM=['Do','Sol','Re','La','Mi','Si','Fa#','Reb','Lab','Mib','Sib','Fa'];
+const MAJ=[0,2,4,5,7,9,11],QD=['','m','m','','','m','dim'],RM=['I','ii','iii','IV','V','vi','vii°'],IN={'':[0,4,7],m:[0,3,7],dim:[0,3,6]};
+let sel=0,ctx=null;const $=i=>document.getElementById(i),NS='http://www.w3.org/2000/svg';
+function pos(i,r){const a=(i*30-90)*Math.PI/180;return [170+r*Math.cos(a),170+r*Math.sin(a)]}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v)}
+function draw(){const w=$('w');w.innerHTML='';const L=(i,k)=>(sel+i+12)%12;
+const role={};role[L(0)]='I';role[L(-1)]='IV';role[L(1)]='V';
+const rin={};rin[L(0)]='vi';rin[L(-1)]='ii';rin[L(1)]='iii';
+const col={I:'--ok',IV:'--bl',V:'--wa',vi:'--ok',ii:'--bl',iii:'--ok'};
+for(let i=0;i<12;i++){[[i,118,26,0],[i,70,20,1]].forEach(([_,r,rad,inn])=>{const p=pos(i,r),rl=inn?rin[i]:role[i],g=document.createElementNS(NS,'g');g.setAttribute('class','n');
+const c=document.createElementNS(NS,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',rad);
+c.setAttribute('fill',rl?`var(${col[rl]})`:'var(--cd)');c.setAttribute('stroke',i===sel&&!inn?'var(--fg)':'var(--bd)');c.setAttribute('stroke-width',i===sel&&!inn?3:1);c.setAttribute('opacity',rl?(inn?.75:1):1);
+const t=document.createElementNS(NS,'text');t.setAttribute('x',p[0]);t.setAttribute('y',p[1]+4);t.setAttribute('text-anchor','middle');t.setAttribute('fill',rl?'#fff':'var(--mu)');
+t.textContent=inn?nn(O[i]+9)+'m':NM[i];g.appendChild(c);g.appendChild(t);g.onclick=()=>{sel=i;draw();sound([[O[i],'']])};w.appendChild(g)})}
+const k=O[sel],sg=sel<=6?sel:12-sel,tp=sel<=6?'sostenido':'bemol';
+$('info').innerHTML=`<b>${NM[sel]} mayor</b> · relativa menor: <b>${nn(k+9)} menor</b> · ${sg===0?'sin alteraciones':sg+' '+tp+(sg>1?'s':'')}<br><span class="mu">Sus vecinos en el círculo son sus acordes más cercanos: ${NM[(sel+11)%12]} (IV) y ${NM[(sel+1)%12]} (V).</span>`;
+$('ch').innerHTML=MAJ.map((o,d)=>{const r=(k+o)%12,cl=['--ok','--bl','--ok','--bl','--wa','--ok','--wa'][d];return `<div style="background:var(${cl});color:#fff"><b>${RM[d]}</b><br>${nn(r)}${QD[d]==='m'?'m':QD[d]==='dim'?'°':''}</div>`}).join('')}
+function sound(cs){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume()}catch(e){return}
+let t=ctx.currentTime+.05;cs.forEach(c=>{IN[c[1]].forEach(i=>o(440*Math.pow(2,((60+(c[0]+i)%12)-69)/12),t,1.1,'triangle',.12));o(440*Math.pow(2,((36+c[0])-69)/12),t,1.1,'sine',.22);t+=1.2})}
+function o(f,t,d,y,g){const a=ctx.createOscillator(),v=ctx.createGain();a.type=y;a.frequency.value=f;v.gain.setValueAtTime(.0001,t);v.gain.linearRampToValueAtTime(g,t+.03);v.gain.exponentialRampToValueAtTime(.0001,t+d);a.connect(v);v.connect(ctx.destination);a.start(t);a.stop(t+d+.05)}
+const deg=(d)=>[(O[sel]+MAJ[d])%12,QD[d]];
+$('p1').onclick=()=>sound([deg(0),deg(3),deg(4),deg(0)]);
+$('p2').onclick=()=>sound([deg(0),deg(5),deg(3),deg(4)]);
+draw();
+</script></div></body></html>
