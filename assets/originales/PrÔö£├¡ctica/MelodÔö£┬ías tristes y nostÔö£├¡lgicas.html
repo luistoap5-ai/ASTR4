@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Melodías tristes y nostálgicas</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--bl:#185fa5;--bb:#e6f1fb;--wa:#ba7517;--wb:#faeeda;--no:#993c1d;--nb:#faece7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:780px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:16px;margin:16px 0 6px}.mu{color:var(--mu);font-size:14px}
+button,select,input[type=range]{font:inherit;color:var(--fg)}
+button,select{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:7px 11px;cursor:pointer}
+.pr{background:var(--ac)!important;color:var(--bg)!important;border-color:var(--ac)!important}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center}
+.cd{background:var(--cd);border-radius:12px;padding:12px 14px;margin:10px 0}
+.cd b{display:block}
+.tg{font-size:12px;padding:2px 9px;border-radius:9px;font-weight:600}
+.gr{display:grid;gap:3px;margin:10px 0}
+.gr button{padding:0;height:28px;border-radius:6px;font-size:11px}
+.gr .lb{font-size:11px;color:var(--mu);display:flex;align-items:center}
+.gr .cur{outline:2px solid var(--wa)}
+.bar{height:12px;background:var(--cd);border-radius:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+li{margin:4px 0;font-size:14px}
+</style></head><body><div id="app">
+<h1>Melodías tristes y nostálgicas</h1>
+<p class="mu">Escucha qué hace triste a una melodía, comprueba escalas y progresiones, y compón la tuya con un medidor de melancolía.</p>
+<div class="row"><label class="mu">Tonalidad <select id="rt" onchange="R=+this.value;draw()"></select></label></div>
+<div class="row" id="tabs"></div>
+<div id="pl"></div>
+<script>
+const NA=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],nn=p=>NA[((p%12)+12)%12],$=i=>document.getElementById(i);
+const VB={Triste:['--bl','--bb'],Melancólica:['--ac','--ab'],Nostálgica:['--wa','--wb'],Dramática:['--no','--nb']};
+const tag=v=>`<span class="tg" style="background:var(${VB[v][1]});color:var(${VB[v][0]})">${v}</span>`;
+let R=0,tab=0,ctx=null,mg=null,tm=[];
+const mf=m=>440*Math.pow(2,(m-69)/12);
+function ac(){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume();if(!mg){mg=ctx.createGain();mg.connect(ctx.destination)}return 1}catch(e){return 0}}
+function tn(m,t,d,g){const o=ctx.createOscillator(),v=ctx.createGain();o.type='triangle';o.frequency.value=mf(m);v.gain.setValueAtTime(.0001,t);v.gain.linearRampToValueAtTime(g,t+.04);v.gain.exponentialRampToValueAtTime(.0001,t+Math.max(d,.1));o.connect(v);v.connect(mg);o.start(t);o.stop(t+d+.1)}
+function stop(){tm.forEach(clearTimeout);tm=[];if(mg){mg.gain.value=0;mg=null}}
+function run(ev,bpm){if(!ac())return;stop();ac();const b=60/bpm,t=ctx.currentTime+.08;ev.forEach(e=>tn(60+R+e[0],t+e[1]*b,e[2]*b,e[3]||.12))}
+const ch=(o,t,d,ints,g)=>ints.map(i=>[o+i,t,d,g||.06]);
+const ml=(a,d,t0,g)=>a.map((o,i)=>[o,(t0||0)+i*d,d*.95,g||.16]);
+const TY={M:[0,4,7],m:[0,3,7],M7:[0,4,7,11],'7':[0,4,7,10],m7:[0,3,7,10]},SF={M:'',m:'m',M7:'7M','7':'7',m7:'m7'};
+const DM=[
+['Tercera menor frente a mayor','La nota del medio del acorde decide la emoción: +4 suena alegre, +3 suena triste.',80,['Mayor',[...ch(0,0,5,[0,4,7]),...ml([0,4,7,4,0],1)]],['Menor',[...ch(0,0,5,[0,3,7]),...ml([0,3,7,3,0],1)]]],
+['La sexta menor: nostalgia','La 6ª menor es la nota del recuerdo: dulce y con un nudo en la garganta.',90,['6ª mayor',[...ch(0,0,7,[0,7]),...ml([0,2,4,5,7,9,7,4],.85)]],['6ª menor',[...ch(0,0,7,[0,7]),...ml([0,2,3,5,7,8,7,3],.85)]]],
+['El suspiro: la nota que cae','Una melodía que baja suena a lamento. Una que sube, a esperanza.',70,['Sube',[...ch(0,0,4,[0,3,7]),...ml([0,3,5,7],1)]],['Cae',[...ch(0,0,4,[0,3,7]),...ml([7,5,3,0],1)]]],
+['Despacio','La misma melodía, más lenta, pesa más: cada nota tiene tiempo de doler.',0,['Rápido (130 bpm)',[...ml([7,5,3,2,0],1)],130],['Lento (50 bpm)',[...ml([7,5,3,2,0],1)],50]],
+['Silencios y notas largas','Respirar entre frases deja que la emoción entre. No hace falta llenar todo.',75,['Todo seguido',[...ml([7,5,3,5,3,2,0],.5)]],['Con silencios',[...ch(0,0,11,[0,3,7]),[7,0,2,.16],[5,2.5,1.5,.16],[3,4.5,1,.16],[2,6.5,1,.16],[0,8,3,.16]]]],
+['El retardo: la nota que choca','Una nota se queda donde no toca y después cae a su sitio: eso duele y consuela a la vez.',70,['Sin retardo',[...ch(0,0,4,[0,3,7]),[3,0,4,.18]]],['Con retardo',[...ch(0,0,4,[0,3,7]),[5,0,2,.18],[3,2,2,.18]]]],
+['El acorde prestado iv','Pasar del IV mayor al iv menor antes de llegar a casa da un giro agridulce y nostálgico.',75,['IV – I',[...ch(5,0,3,[0,4,7]),...ch(0,3,3,[0,4,7])]],['IV – iv – I',[...ch(5,0,2,[0,4,7]),...ch(5,2,2,[0,3,7]),...ch(0,4,2,[0,4,7])]]],
+['El registro','Las notas graves y medias suenan más íntimas y oscuras que las agudas.',70,['Agudo',[...ch(0,0,5,[0,3,7]),...ml([12,15,19,15,12],1)]],['Medio y grave',[...ch(-12,0,5,[0,3,7]),...ml([-5,-2,2,-2,-5],1)]]]];
+const SCL=[['Menor natural','Triste','0 2 3 5 7 8 10','La base de la tristeza: tercera menor, sexta menor y séptima menor.'],['Dórico','Melancólica','0 2 3 5 7 9 10','Menor pero con la 6ª mayor: triste con un rayo de esperanza.'],['Frigio','Dramática','0 1 3 5 7 8 10','Oscuro y pesado: la 2ª menor aprieta. Sonido flamenco.'],['Menor armónica','Dramática','0 2 3 5 7 8 11','La 7ª mayor crea un tirón dramático hacia la tónica.'],['Pentatónica menor','Nostálgica','0 3 5 7 10','Cinco notas que no fallan: la del blues y la balada.']];
+const IV=[['3ª menor',3,'Triste','La esencia de la tristeza.'],['6ª menor',8,'Nostálgica','Agridulce: recuerdo y pérdida.'],['7ª menor',10,'Melancólica','Abierta, suspendida, sin cerrar.'],['2ª menor',1,'Dramática','Roce doloroso que pide resolver.']];
+const PG=[['vi – IV – I – V','Melancólica',0,[[9,'m'],[5,'M'],[0,'M'],[7,'M']],'Empieza por el acorde triste y se mueve hacia la luz: introspectiva.'],['i – VII – VI – V','Dramática',1,[[0,'m'],[10,'M'],[8,'M'],[7,'M']],'El bajo de lamento: baja escalón a escalón y acaba en tensión.'],['i – VI – III – VII','Nostálgica',1,[[0,'m'],[8,'M'],[3,'M'],[10,'M']],'Agridulce: tristeza con un recuerdo luminoso.'],['i – iv – VII – III','Triste',1,[[0,'m'],[5,'m'],[10,'M'],[3,'M']],'Emocional y cinematográfica.'],['i – VII – VI – iv','Triste',1,[[0,'m'],[10,'M'],[8,'M'],[5,'m']],'Sombría y pesada.'],['i – v – VI – VII','Melancólica',1,[[0,'m'],[7,'m'],[8,'M'],[10,'M']],'Bucle agridulce típico del trap emocional.'],['IV – iv – I','Nostálgica',0,[[5,'M'],[5,'m'],[0,'M']],'El iv menor prestado: sonrisa con ojos húmedos.'],['IV7M – V7 – iii7 – vi7','Nostálgica',0,[[5,'M7'],[7,'7'],[4,'m7'],[9,'m7']],'Dulce y sofisticada, con aire de recuerdo.']];
+const pc=c=>nn(R+c[0])+SF[c[1]];
+const TABS=['Ingredientes','Escalas e intervalos','Progresiones','Compón'];
+$('rt').innerHTML=NA.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+function go(i){tab=i;stop();draw()}
+function draw(){$('tabs').innerHTML=TABS.map((t,i)=>`<button class="${tab===i?'pr':''}" onclick="go(${i})">${t}</button>`).join('');[t0,t1,t2,t3][tab]()}
+function pd(i,k){const d=DM[i],v=d[3+k];run(v[1],v[2]||d[2])}
+function t0(){$('pl').innerHTML=DM.map((d,i)=>`<div class="cd"><b>${i+1}. ${d[0]}</b><span class="mu">${d[1]}</span><div class="row"><button onclick="pd(${i},0)">A · ${d[3][0]}</button><button class="pr" onclick="pd(${i},1)">B · ${d[4][0]}</button></div></div>`).join('')}
+function psc(i){const s=SCL[i][2].split(' ').map(Number);run([...s.map((o,j)=>[o,j*.6,.55,.16]),[12,s.length*.6,.55,.16],...[...s].reverse().map((o,j)=>[o,(s.length+1+j)*.6,.55,.16])],100)}
+function piv(k){run([[0,0,2.5,.14],[k,0,2.5,.14],[0,3,1,.16],[k,4,2,.16]],70)}
+function t1(){$('pl').innerHTML='<h2>Escalas y modos</h2>'+SCL.map((s,i)=>`<div class="cd"><b>${nn(R)} ${s[0]} ${tag(s[1])}</b><span class="mu">${s[3]}</span><br><span style="font-size:14px">${s[2].split(' ').map(o=>nn(R+ +o)).join(' – ')}</span><div class="row"><button onclick="psc(${i})">Escuchar</button></div></div>`).join('')+'<h2>Intervalos que duelen</h2>'+IV.map(v=>`<div class="cd"><b>${v[0]} desde ${nn(R)} ${tag(v[2])}</b><span class="mu">${v[3]}</span><div class="row"><button onclick="piv(${v[1]})">Escuchar</button></div></div>`).join('')}
+function ppg(i){const p=PG[i],n=p[3].length,ev=[];p[3].forEach((c,j)=>{ev.push(...ch(c[0]-12,j*2,2,[0]),...ch(c[0],j*2,2,TY[c[1]],.07),...ml(TY[c[1]].map(x=>c[0]+x+12),.3,j*2,.07))});run(ev,70)}
+function t2(){$('pl').innerHTML=PG.map((p,i)=>`<div class="cd"><b>${p[0]} ${tag(p[1])}</b><span class="mu">${p[4]}</span><br><span style="font-size:14px">${p[2]?'Tonalidad menor de':'Tonalidad mayor de'} ${nn(R)}: <b style="display:inline">${p[3].map(pc).join(' – ')}</b></span><div class="row"><button onclick="ppg(${i})">Escuchar</button></div></div>`).join('')}
+const SC=[['Menor natural',[0,2,3,5,7,8,10,12]],['Dórico',[0,2,3,5,7,9,10,12]],['Frigio',[0,1,3,5,7,8,10,12]],['Menor armónica',[0,2,3,5,7,8,11,12]],['Pentatónica menor',[0,3,5,7,10,12]]];
+const MP=PG.filter(p=>p[3].length===4&&p[2]===1);
+let C={sc:0,pg:0,bpm:70,mel:[null,null,null,null,null,null,null,null]};
+function rnd(){const n=SC[C.sc][1].length,a=[Math.min(4,n-1),Math.min(2,n-1)][Math.random()<.5?0:1],m=[a];for(let i=1;i<8;i++){let d=[-1,-1,-1,0,1][Math.floor(Math.random()*5)];m.push(Math.max(0,Math.min(n-1,m[i-1]+d)))}m[7]=Math.random()<.7?0:Math.min(2,n-1);if(Math.random()<.5)m[3]=null;C.mel=m;draw()}
+function cell(c,r){C.mel[c]=C.mel[c]===r?null:r;if(ac()){stop();ac();tn(72+R+SC[C.sc][1][r]-12,ctx.currentTime,.6,.16)}draw()}
+function pcmp(){const s=SC[C.sc][1],p=MP[C.pg],ev=[];p[3].forEach((c,j)=>ev.push(...ch(c[0]-12,j*2,2,[0],.07),...ch(c[0],j*2,2,TY[c[1]],.05)));C.mel.forEach((r,i)=>{if(r!=null)ev.push([s[r]+12,i,.92,.17])});run(ev,C.bpm);C.mel.forEach((_,i)=>tm.push(setTimeout(()=>{document.querySelectorAll('.gr button').forEach(b=>b.classList.toggle('cur',+b.dataset.c===i))},i*60000/C.bpm)));tm.push(setTimeout(()=>document.querySelectorAll('.cur').forEach(b=>b.classList.remove('cur')),8*60000/C.bpm))}
+function meter(){const s=SC[C.sc][1],m=C.mel,ns=m.filter(x=>x!=null);if(ns.length<3)return{sc:0,tips:['Coloca al menos 3 notas.']};let st=0,ds=0,as=0,big=0,tot=0;for(let i=1;i<ns.length;i++){const d=ns[i]-ns[i-1];tot++;if(Math.abs(d)<=1)st++;if(d<0)ds++;if(d>0)as++;if(Math.abs(d)>3)big++}
+const rest=m.some(x=>x==null),last=ns[ns.length-1],home=last===0||last===s.length-1||last===1&&false,third=last===2,used=ns.map(x=>s[x]%12),b3=used.includes(3),b6=used.includes(8);
+let sc=25*st/tot+(ds+as?20*ds/(ds+as):0)+(home?20:third?12:0)+(b3?8:0)+(b6?10:0)+(rest?10:0)+(C.bpm<=65?15:C.bpm<=85?8:0)-8*big;sc=Math.round(Math.max(0,Math.min(100,sc)));
+const tips=[];if(ds<=as)tips.push('Haz que la melodía caiga más: nota alta hacia nota baja.');if(st/tot<.6)tips.push('Usa pasos de una nota en vez de saltos.');if(!home)tips.push('Termina en la nota más grave (tónica) para cerrar con calma.');if(!rest)tips.push('Deja un silencio: respirar da emoción.');if(C.bpm>85)tips.push('Baja el tempo a 60–70 bpm.');if(!b3)tips.push('Usa la tercera menor (tercera nota de la escala).');if(!b6&&s.includes(8))tips.push('Prueba la 6ª menor (sexta nota) para dar nostalgia.');return{sc,tips}}
+function t3(){const s=SC[C.sc][1],n=s.length,me=meter(),lab=me.sc<35?'Neutra':me.sc<60?'Melancólica':me.sc<80?'Triste':'Muy triste y nostálgica';
+let g=`<div class="gr" style="grid-template-columns:44px repeat(8,1fr)">`;for(let r=n-1;r>=0;r--){g+=`<div class="lb">${nn(R+s[r])}</div>`;for(let c=0;c<8;c++)g+=`<button data-c="${c}" class="${C.mel[c]===r?'pr':''}" onclick="cell(${c},${r})"></button>`}g+='</div>';
+$('pl').innerHTML=`<div class="row"><select onchange="C.sc=+this.value;C.mel=C.mel.map(x=>x!=null&&x>=SC[C.sc][1].length?null:x);draw()">${SC.map((x,i)=>`<option value="${i}" ${C.sc===i?'selected':''}>${x[0]}</option>`).join('')}</select><select onchange="C.pg=+this.value;draw()">${MP.map((x,i)=>`<option value="${i}" ${C.pg===i?'selected':''}>${x[0]}</option>`).join('')}</select><label class="mu">Tempo <input type="range" min="50" max="110" value="${C.bpm}" oninput="C.bpm=+this.value;$('bv').textContent=C.bpm" onchange="draw()"> <b id="bv">${C.bpm}</b> bpm</label></div><p class="mu" style="margin:4px 0">8 notas, una por tiempo: pulsa una celda por columna. Vuelve a pulsarla para dejar un silencio. Cada acorde dura 2 tiempos (${MP[C.pg][3].map(pc).join(' – ')}).</p>${g}<div class="row"><button class="pr" onclick="pcmp()">Escuchar</button><button onclick="rnd()">Melodía de ejemplo</button><button onclick="C.mel=[null,null,null,null,null,null,null,null];draw()">Borrar</button></div><div class="cd"><b>Medidor de melancolía: ${me.sc}/100 · ${lab}</b><div class="bar"><i style="width:${me.sc}%"></i></div><span class="mu">Es orientativo: puntúa reglas habituales de la tristeza, no tu gusto.</span><ul>${me.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`}
+draw();
+</script></div></body></html>

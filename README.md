@@ -115,3 +115,7 @@ La cadena vocal es una guía de trabajo, no una receta universal. El orden y los
 - En pantallas de ordenador se muestran las ocho secciones en una barra inferior de ocho columnas.
 - Ajustes de ancho, márgenes, cuadrículas y áreas seguras para iPhone.
 - Caché del service worker renovada para evitar servir la hoja de estilos anterior.
+
+
+## Navegación v12
+La navegación inferior se reorganizó en dos filas horizontales equilibradas de cuatro accesos cada una. El diseño se adapta a iPhone (incluidas las áreas seguras) y a escritorio, conserva las ocho secciones y marca la sección activa.

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piano 100%</title>
+<style>
+:root{--bg:#fff;--fg:#2c2c2a;--mu:#5f5e5a;--cd:#f4f2ec;--bd:#d3d1c7;--ac:#534ab7;--ab:#eeedfe;--ok:#0f6e56;--ob:#e1f5ee;--bl:#185fa5;--bb:#e6f1fb;--wa:#ba7517;--wb:#faeeda;--no:#993c1d;--nb:#faece7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1e1e1c;--fg:#f1efe8;--mu:#b4b2a9;--cd:#2c2c2a;--bd:#444441;--ac:#afa9ec;--ab:#3c3489;--ok:#5dcaa5;--ob:#04342c;--bl:#85b7eb;--bb:#042c53;--wa:#ef9f27;--wb:#412402;--no:#f0997b;--nb:#4a1b0c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:820px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;margin:0 0 4px}.mu{color:var(--mu);font-size:14px}
+button{font:inherit;color:var(--fg);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:7px 11px;cursor:pointer}
+.pr{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center}
+.pn{position:relative;height:170px;margin:14px 0 6px;touch-action:manipulation}
+.k{position:absolute;top:0;padding:0}
+.k.w{height:100%;background:#fbfaf6;color:#555;border:1px solid var(--bd);border-radius:0 0 6px 6px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:11px}
+.k.b{height:62%;background:#2c2c2a;border:1px solid #2c2c2a;border-radius:0 0 4px 4px;z-index:2}
+.k.on{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)}
+.k.rt{background:var(--wa)!important;color:#fff!important;border-color:var(--wa)}
+.fb{padding:12px 14px;border-radius:10px;background:var(--cd);margin:10px 0}
+.tg{font-size:12px;padding:2px 9px;border-radius:9px;font-weight:600}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin:8px 0}
+h2{font-size:16px;margin:14px 0 4px}
+li{margin:5px 0}
+</style></head><body><div id="app">
+<h1>Piano 100%</h1>
+<p class="mu">Toca el teclado, aprende cada nota y explora intervalos, acordes, escalas y progresiones con su vibra: alegre, triste, calmada, agridulce o tensa.</p>
+<div class="row" id="tabs"></div>
+<div class="pn" id="pn"></div>
+<div class="row"><label class="mu"><input type="checkbox" id="nm" checked onchange="pn()"> Mostrar nombres</label></div>
+<div id="pl"></div>
+<script>
+const NA=['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'],EN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],AL=['','Reb','','Mib','','','Solb','','Lab','','Sib',''];
+const nn=p=>NA[((p%12)+12)%12],$=i=>document.getElementById(i),W=[0,2,4,5,7,9,11];
+const VB={Alegre:['--wa','--wb'],Triste:['--bl','--bb'],Calmada:['--ok','--ob'],Agridulce:['--ac','--ab'],Tensa:['--no','--nb']};
+const tag=v=>`<span class="tg" style="background:var(${VB[v][1]});color:var(${VB[v][0]})">${v}</span>`;
+const INT=[['Unísono','Calmada','La misma nota: estable, sin movimiento.'],['2ª menor','Tensa','Apretada y áspera: la inquietud del cine de terror y el sabor del flamenco.'],['2ª mayor','Alegre','Un paso de escala: neutra y ligera.'],['3ª menor','Triste','La que da tristeza a los acordes menores.'],['3ª mayor','Alegre','La que da alegría a los acordes mayores.'],['4ª justa','Calmada','Abierta y estable; suena a «salida de casa».'],['Tritono','Tensa','La más inestable: pide resolver y suena dramática.'],['5ª justa','Calmada','Potente y estable: el sonido de los power chords.'],['6ª menor','Agridulce','Nostálgica, con un punto de tristeza.'],['6ª mayor','Alegre','Dulce y esperanzada.'],['7ª menor','Agridulce','Bluesy y con ganas de moverse.'],['7ª mayor','Tensa','Brillante pero muy tensa: pide subir a la octava.'],['Octava','Calmada','La misma nota, más aguda: pura y estable.']];
+const CT=[[' mayor',[0,4,7],'Alegre','Estable y luminoso.'],[' menor',[0,3,7],'Triste','Oscuro y melancólico.'],[' dism.',[0,3,6],'Tensa','Inestable: pide resolver.'],[' aum.',[0,4,8],'Tensa','Misterioso, en suspenso.'],['sus2',[0,2,7],'Calmada','Abierto y flotante.'],['sus4',[0,5,7],'Tensa','Suspendido: quiere bajar a la tercera.'],['7',[0,4,7,10],'Tensa','Bluesy: pide volver al acorde de casa.'],['7M',[0,4,7,11],'Calmada','Soñador y suave.'],['m7',[0,3,7,10],'Agridulce','Suave y melancólico.'],['m7b5',[0,3,6,10],'Tensa','Oscuro y tenso.'],['dim7',[0,3,6,9],'Tensa','Dramático y muy inestable.'],['5',[0,7],'Calmada','Potente y vacío (power chord).']];
+const SCL=[['Mayor',[0,2,4,5,7,9,11],'Alegre','Luminosa y estable.'],['Menor natural',[0,2,3,5,7,8,10],'Triste','Oscura y melancólica.'],['Menor armónica',[0,2,3,5,7,8,11],'Tensa','Dramática, con aire clásico y flamenco.'],['Pentatónica mayor',[0,2,4,7,9],'Alegre','Cinco notas sencillas y brillantes.'],['Pentatónica menor',[0,3,5,7,10],'Agridulce','La del blues y el rock.'],['Blues',[0,3,5,6,7,10],'Agridulce','Pentatónica menor con la nota «azul» (el tritono).'],['Frigio',[0,1,3,5,7,8,10],'Tensa','Oscuro: el modo del flamenco.'],['Dórico',[0,2,3,5,7,9,10],'Calmada','Menor pero luminoso: soul y jazz.'],['Lidio',[0,2,4,6,7,9,11],'Calmada','Soñador y mágico.'],['Mixolidio',[0,2,4,5,7,9,10],'Alegre','Alegre, con aire de rock y blues.']];
+const TY={M:[0,4,7],m:[0,3,7],'7':[0,4,7,10],m7:[0,3,7,10],M7:[0,4,7,11]},SF={M:'',m:'m','7':'7',m7:'m7',M7:'7M'};
+const PRG=[['I – V – vi – IV','Alegre',[[0,'M'],[7,'M'],[9,'m'],[5,'M']],'Pop emotivo y de himno.'],['I – IV – V – IV','Alegre',[[0,'M'],[5,'M'],[7,'M'],[5,'M']],'Rock directo y bailable.'],['vi – IV – I – V','Triste',[[9,'m'],[5,'M'],[0,'M'],[7,'M']],'Empieza en lo triste: melancólica.'],['i – iv – VII – III','Triste',[[0,'m'],[5,'m'],[10,'M'],[3,'M']],'Emocional y cinematográfica.'],['I – vi – IV – V','Calmada',[[0,'M'],[9,'m'],[5,'M'],[7,'M']],'Doo-wop: dulce y nostálgica.'],['ii – V – I','Calmada',[[2,'m7'],[7,'7'],[0,'M7'],[0,'M7']],'Jazz y neo-soul: elegante.'],['I7M – vi7 – ii7 – V7','Calmada',[[0,'M7'],[9,'m7'],[2,'m7'],[7,'7']],'La vuelta del jazz: relajada.'],['i – VI – III – VII','Agridulce',[[0,'m'],[8,'M'],[3,'M'],[10,'M']],'Épica y eufórica: EDM y cine.'],['IV – iv – I','Agridulce',[[5,'M'],[5,'m'],[0,'M']],'El iv menor da un giro agridulce.'],['i – VII – VI – V','Tensa',[[0,'m'],[10,'M'],[8,'M'],[7,'M']],'Cadencia andaluza: flamenco.'],['i – iv – V – i','Tensa',[[0,'m'],[5,'m'],[7,'M'],[0,'m']],'Oscura, con resolución clara.'],['i – bII – i','Tensa',[[0,'m'],[1,'M'],[0,'m']],'Frigio: oscura y misteriosa.']];
+let H={},sel=new Set(),tab=0,root=0,S={last:null,iv:null,ch:null,sc:0,sr:false,pf:'Todas',pi:0},ctx=null,tm=[];
+const TABS=['Teclas','Intervalos','Acordes','Escalas','Progresiones'];
+function mf(m){return 440*Math.pow(2,(m-69)/12)}
+function ac(){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();ctx.resume();return 1}catch(e){return 0}}
+function tn(m,t,d,g){const o=ctx.createOscillator(),v=ctx.createGain();o.type='triangle';o.frequency.value=mf(m);v.gain.setValueAtTime(.0001,t);v.gain.linearRampToValueAtTime(g||.14,t+.02);v.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(v);v.connect(ctx.destination);o.start(t);o.stop(t+d+.05)}
+function ply(ms,seq){if(!ac())return;const t=ctx.currentTime+.05;ms.forEach((m,i)=>seq?tn(m,t+i*.4,.9):tn(m,t,1.5,.1))}
+function stop(){tm.forEach(clearTimeout);tm=[]}
+function pn(){let h='';for(let i=0;i<15;i++){const m=60+12*Math.floor(i/7)+W[i%7];h+=`<button class="k w ${H[m]||''}" style="left:${i*100/15}%;width:${100/15}%" onclick="kp(${m})" aria-label="${nn(m)}">${$('nm').checked?nn(m):''}</button>`;
+if(i<14&&[0,2,5,7,9].includes(W[i%7])){const b=m+1;h+=`<button class="k b ${H[b]||''}" style="left:calc(${(i+1)*100/15}% - ${.3*100/15}%);width:${.6*100/15}%" onclick="kp(${b})" aria-label="${nn(b)}"></button>`}}$('pn').innerHTML=h}
+function nm(m){const p=m%12;return nn(p)+(AL[p]?'/'+AL[p]:'')}
+function kp(m){ply([m]);if(tab===2){sel.has(m)?sel.delete(m):sel.add(m);hl2()}else{if(tab===0){S.last=m;H={};H[m]='rt'}}draw()}
+function hl2(){H={};const d=det();sel.forEach(m=>{H[m]=d&&m%12===d.r?'rt':'on'})}
+function det(){const pcs=[...new Set([...sel].map(m=>m%12))];if(pcs.length<2)return null;for(const r of pcs){const k=pcs.map(p=>(p-r+12)%12).sort((a,b)=>a-b).join();for(const c of CT)if(c[1].join()===k)return{r,c}}return null}
+function rb(fn){return `<div class="row">${NA.map((n,i)=>`<button class="${root===i?'pr':''}" onclick="${fn}(${i})">${n}</button>`).join('')}</div>`}
+function go(i){tab=i;H={};sel=new Set();stop();S.iv=S.ch=null;draw()}
+function draw(){$('tabs').innerHTML=TABS.map((t,i)=>`<button class="${tab===i?'pr':''}" onclick="go(${i})">${t}</button>`).join('');pn();[p0,p1,p2,p3,p4][tab]()}
+function p0(){const m=S.last;let i='Toca una tecla para ver su ficha.';if(m){const o=Math.floor(m/12)-1;i=`<b>${nm(m)}${o}</b> · notación inglesa ${EN[m%12]}${o} · ${mf(m).toFixed(1)} Hz · tecla ${[1,3,6,8,10].includes(m%12)?'negra':'blanca'} · a ${m-60} semitonos del Do central`}
+$('pl').innerHTML=`<div class="fb">${i}</div><ul><li>Hay <b>12 notas</b> y se repiten cada octava (cada 12 teclas).</li><li>Las negras van en grupos de <b>2 y de 3</b>. El <b>Do</b> es la blanca justo a la izquierda del grupo de 2.</li><li>Entre Mi y Fa, y entre Si y Do, no hay negra, pero siguen a <b>1 semitono</b>.</li><li>Una negra tiene dos nombres: Do# = Reb. El sostenido sube, el bemol baja.</li><li>Cada octava dobla la frecuencia: La4 = 440 Hz y La5 = 880 Hz.</li><li>1 tecla = 1 semitono. 2 teclas = 1 tono.</li><li>Do = C, Re = D, Mi = E, Fa = F, Sol = G, La = A, Si = B.</li></ul>`}
+function setR(i){root=i;S.iv=null;S.ch=null;H={};draw()}
+function ivl(k){S.iv=k;const a=60+root,b=a+k;H={};H[a]='rt';H[b]='on';ply([a,b]);draw()}
+function p1(){const k=S.iv,d=k==null?'':`<div class="fb"><b>${nn(root)} → ${nn(root+k)}</b>: ${INT[k][0]} (${k} semitonos) ${tag(INT[k][1])}<br>${INT[k][2]}</div>`;
+$('pl').innerHTML=`<h2>Nota de partida</h2>${rb('setR')}<h2>Intervalo</h2><div class="g">${INT.map((x,i)=>`<button class="${k===i?'pr':''}" onclick="ivl(${i})">${x[0]}<br><small>${i} st</small></button>`).join('')}</div>${d||'<p class="mu">Elige un intervalo y escúchalo.</p>'}`}
+function chd(i){S.ch=i;const a=60+root;sel=new Set(CT[i][1].map(x=>a+x));H={};sel.forEach(m=>H[m]=m===a?'rt':'on');ply([...sel]);draw()}
+function p2(){const d=det();let r='<p class="mu">Pulsa teclas para ver qué acorde forman, o construye uno abajo.</p>';if(d)r=`<div class="fb"><b>${nn(d.r)}${d.c[0]}</b> ${tag(d.c[2])}<br>${d.c[3]}</div>`;else if(sel.size>1)r='<div class="fb">No reconozco ese conjunto de notas como acorde.</div>';
+$('pl').innerHTML=`${r}<div class="row"><button onclick="ply([...sel])">Escuchar</button><button onclick="sel=new Set();H={};draw()">Borrar</button></div><h2>Construir un acorde</h2>${rb('setR')}<div class="g">${CT.map((c,i)=>`<button class="${S.ch===i?'pr':''}" onclick="chd(${i})">${nn(root)}${c[0]}</button>`).join('')}</div>`}
+function scl(i){S.sc=i;S.sr=true;const a=60+root;H={};SCL[i][1].forEach(x=>{[a+x,a+x+12].forEach(m=>{if(m<=84)H[m]=x===0?'rt':'on'})});H[a+24]='rt';ply([...SCL[i][1].map(x=>a+x),a+12],1);draw()}
+function p3(){const s=SCL[S.sc],i=S.sr?`<div class="fb"><b>${nn(root)} ${s[0]}</b> ${tag(s[2])}<br>${s[3]}<br><span class="mu">Notas: ${s[1].map(x=>nn(root+x)).join(' – ')}</span><br><span class="mu">Pasos en semitonos: ${s[1].map((x,j)=>(s[1][j+1]??12)-x).join('-')}</span></div>`:'<p class="mu">Elige una escala y escúchala subiendo.</p>';
+$('pl').innerHTML=`<h2>Nota de partida</h2>${rb('setRs')}<h2>Escala o modo</h2><div class="g">${SCL.map((c,j)=>`<button class="${S.sr&&S.sc===j?'pr':''}" onclick="scl(${j})">${c[0]}</button>`).join('')}</div>${i}`}
+function setRs(i){root=i;if(S.sr)scl(S.sc);else draw()}
+function pf(v){S.pf=v;S.pi=0;draw()}
+function pc(c){return nn(root+c[0])+SF[c[1]]}
+function prg(){const p=lst()[S.pi];if(!p||!ac())return;stop();const t=ctx.currentTime+.05;p[2].forEach((c,i)=>{const a=60+(root+c[0])%12,ms=TY[c[1]].map(x=>a+x);ms.forEach(m=>tn(m,t+i*1.3,1.25,.1));tm.push(setTimeout(()=>{H={};ms.forEach(m=>H[m]=m===a?'rt':'on');pn()},i*1300))});tm.push(setTimeout(()=>{H={};pn()},p[2].length*1300))}
+const lst=()=>PRG.filter(p=>S.pf==='Todas'||p[1]===S.pf);
+function setRp(i){root=i;draw()}
+function sp(i){S.pi=i;draw();prg()}
+function p4(){const L=lst(),p=L[S.pi]||L[0];
+$('pl').innerHTML=`<h2>Filtrar por vibra</h2><div class="row">${['Todas',...Object.keys(VB)].map(v=>`<button class="${S.pf===v?'pr':''}" onclick="pf('${v}')">${v}</button>`).join('')}</div><h2>Tonalidad</h2>${rb('setRp')}<h2>Progresión</h2><div class="g">${L.map((x,i)=>`<button class="${S.pi===i?'pr':''}" onclick="sp(${i})">${x[0]}</button>`).join('')}</div><div class="fb"><b>${p[0]}</b> ${tag(p[1])}<br>${p[3]}<br><span class="mu">${p[2].map(pc).join(' – ')}</span></div><div class="row"><button class="pr" onclick="prg()">Escuchar</button></div>`}
+draw();
+</script></div></body></html>
