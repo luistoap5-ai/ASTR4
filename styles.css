@@ -249,3 +249,31 @@ main{padding:clamp(18px,3vw,34px) clamp(15px,3vw,30px) 38px}
   main{padding-inline:36px}
 }
 @media(prefers-reduced-motion:reduce){.bottom-nav{scroll-behavior:auto}}
+
+
+/* ASTR4 v11 — navegación doble, limpia y adaptable */
+:root{--astr4-duo-height:78px}
+.app-shell{padding-bottom:calc(var(--astr4-duo-height) + var(--safe-bottom) + 26px)}
+.bottom-nav.duo-nav{position:fixed;z-index:1000;left:50%;right:auto;bottom:calc(12px + var(--safe-bottom));transform:translateX(-50%);width:min( min(520px, calc(100% - 32px)), 520px);max-width:520px;min-height:0;height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:9px;border:1px solid rgba(190,151,239,.24);border-radius:22px;background:rgba(19,14,29,.94);box-shadow:0 14px 45px rgba(0,0,0,.38),0 0 28px rgba(154,105,214,.09);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);overflow:visible}
+.nav-group{position:relative;min-width:0}
+.nav-group-trigger{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;border:1px solid transparent;border-radius:15px;background:transparent;color:var(--text);cursor:pointer;text-align:left;transition:background .2s,border-color .2s,transform .2s}
+.nav-group-trigger>span:nth-child(2){display:grid;gap:3px;min-width:0}
+.nav-group-trigger strong{font:700 13px 'Space Grotesk',sans-serif;letter-spacing:.01em}
+.nav-group-trigger small{font-size:9px;color:var(--muted);white-space:nowrap}
+.nav-group-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#a879e22c,#8b5bc51a);border:1px solid #bd96ee30;color:#d9baff;font-size:20px}
+.nav-chevron{font-size:17px;color:#b99ad9;transition:transform .2s}
+.nav-group.active>.nav-group-trigger,.nav-group.open>.nav-group-trigger{background:linear-gradient(135deg,#a879e21c,#a879e208);border-color:#bd96ee36}
+.nav-group.open .nav-chevron{transform:rotate(180deg)}
+.nav-group-trigger:focus-visible,.nav-destination:focus-visible{outline:2px solid #c9a2ff;outline-offset:2px}
+.nav-menu{position:absolute;bottom:calc(100% + 13px);left:0;width:100%;min-width:205px;display:grid;gap:4px;padding:8px;border:1px solid rgba(190,151,239,.25);border-radius:17px;background:rgba(22,16,33,.98);box-shadow:0 16px 42px rgba(0,0,0,.42);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);opacity:0;visibility:hidden;transform:translateY(8px) scale(.98);transform-origin:bottom center;transition:opacity .18s,transform .18s,visibility .18s}
+.nav-group:last-child .nav-menu{left:auto;right:0}
+.nav-group.open .nav-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.nav-destination{display:flex;align-items:center;gap:11px;width:100%;min-height:42px;padding:9px 11px;border:0;border-radius:11px;background:transparent;color:var(--text);font:500 12px inherit;text-align:left;cursor:pointer;transition:background .15s,color .15s}
+.nav-destination>span{width:23px;text-align:center;color:#c9a2ff;font-size:17px}
+.nav-destination:hover,.nav-destination.current{background:#a879e21c;color:#e5d4fa}
+.nav-destination.current{box-shadow:inset 0 0 0 1px #bd96ee24}
+body.light-mode .bottom-nav.duo-nav{background:rgba(250,247,255,.96);border-color:rgba(116,77,157,.22);box-shadow:0 12px 38px rgba(49,30,68,.16)}
+body.light-mode .nav-menu{background:rgba(250,247,255,.99);border-color:rgba(116,77,157,.22);box-shadow:0 16px 42px rgba(49,30,68,.2)}
+@media(max-width:600px){:root{--astr4-duo-height:74px}.bottom-nav.duo-nav{width:calc(100% - 24px);bottom:calc(8px + var(--safe-bottom));gap:7px;padding:7px;border-radius:19px}.nav-group-trigger{min-height:54px;gap:8px;padding:7px 8px}.nav-group-icon{width:31px;height:31px;font-size:18px}.nav-group-trigger strong{font-size:12px}.nav-group-trigger small{font-size:8px}.nav-menu{min-width:0;width:calc(100vw - 38px);max-width:245px}.nav-group:last-child .nav-menu{right:0;left:auto}.app-shell{padding-bottom:calc(var(--astr4-duo-height) + var(--safe-bottom) + 22px)}}
+@media(max-width:360px){.nav-group-trigger{gap:6px;padding-inline:5px}.nav-group-trigger small{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.nav-group-trigger,.nav-chevron,.nav-menu{transition:none}}

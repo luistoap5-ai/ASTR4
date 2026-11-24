@@ -11,12 +11,25 @@
 <div class="app-shell">
   <header class="topbar"><a class="brand" href="#inicio" aria-label="ASTR4 inicio"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">ASTR4<small>MUSIC LEARNING SYSTEM</small></span></a><button class="icon-btn" id="themeBtn" aria-label="Cambiar tema" title="Cambiar tema">◐</button></header>
   <main id="view" tabindex="-1"></main>
-  <nav class="bottom-nav" aria-label="Navegación principal" tabindex="0">
-    <button data-route="inicio" class="nav-item active"><span>⌂</span><small>Inicio</small></button>
-    <button data-route="estudio" class="nav-item"><span>◈</span><small>Estudio</small></button><button data-route="academia" class="nav-item"><span>▤</span><small>Academia</small></button>
-    <button data-route="apuntes" class="nav-item"><span>▧</span><small>Apuntes</small></button>
-    <button data-route="actividades" class="nav-item"><span>✧</span><small>Actividades</small></button><button data-route="laboratorio" class="nav-item"><span>⌘</span><small>Laboratorio</small></button>
-    <button data-route="planificador" class="nav-item"><span>▦</span><small>Plan</small></button><button data-route="progreso" class="nav-item"><span>◷</span><small>Progreso</small></button>
+  <nav class="bottom-nav duo-nav" aria-label="Navegación principal">
+    <div class="nav-group" data-nav-group="learn">
+      <button class="nav-group-trigger" type="button" aria-expanded="false" aria-controls="learn-menu" data-menu-toggle="learn"><span class="nav-group-icon" aria-hidden="true">⌘</span><span><strong>Aprender</strong><small>Academia y recursos</small></span><span class="nav-chevron" aria-hidden="true">⌃</span></button>
+      <div class="nav-menu" id="learn-menu" role="group" aria-label="Secciones para aprender">
+        <button class="nav-destination" type="button" data-route="inicio"><span>⌂</span>Inicio</button>
+        <button class="nav-destination" type="button" data-route="academia"><span>▤</span>Academia</button>
+        <button class="nav-destination" type="button" data-route="apuntes"><span>▧</span>Apuntes</button>
+        <button class="nav-destination" type="button" data-route="actividades"><span>✧</span>Actividades</button>
+        <button class="nav-destination" type="button" data-route="progreso"><span>◷</span>Progreso</button>
+      </div>
+    </div>
+    <div class="nav-group" data-nav-group="create">
+      <button class="nav-group-trigger" type="button" aria-expanded="false" aria-controls="create-menu" data-menu-toggle="create"><span class="nav-group-icon" aria-hidden="true">✦</span><span><strong>Crear</strong><small>Estudio y herramientas</small></span><span class="nav-chevron" aria-hidden="true">⌃</span></button>
+      <div class="nav-menu" id="create-menu" role="group" aria-label="Secciones para crear">
+        <button class="nav-destination" type="button" data-route="estudio"><span>◈</span>Mi estudio</button>
+        <button class="nav-destination" type="button" data-route="laboratorio"><span>⌘</span>Laboratorio</button>
+        <button class="nav-destination" type="button" data-route="planificador"><span>▦</span>Planificador</button>
+      </div>
+    </div>
   </nav>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
