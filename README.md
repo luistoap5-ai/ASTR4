@@ -108,3 +108,10 @@ Las diez actividades se abren dentro de ASTR4 mediante un visor integrado. Tambi
 Se incorpora una Sala de producción con cinco etapas de control: preproducción, grabación vocal, mezcla, entrega y lanzamiento. Incluye listas de comprobación persistentes, selector de procesos para una cadena vocal orientativa, bitácora de decisiones de mezcla, ficha de lanzamiento y exportación de un informe `.txt`. Los nuevos datos se guardan en `astr4-data` y se incluyen en la copia JSON general.
 
 La cadena vocal es una guía de trabajo, no una receta universal. El orden y los procesos deben decidirse escuchando la toma y el contexto de la canción. Las recomendaciones de entrega evitan imponer un único objetivo de sonoridad válido para todas las plataformas.
+
+
+## ASTR4 v10 — Diseño adaptable
+- Navegación inferior deslizable horizontalmente en móviles, con desplazamiento táctil nativo y áreas de toque ampliadas.
+- En pantallas de ordenador se muestran las ocho secciones en una barra inferior de ocho columnas.
+- Ajustes de ancho, márgenes, cuadrículas y áreas seguras para iPhone.
+- Caché del service worker renovada para evitar servir la hoja de estilos anterior.

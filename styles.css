@@ -174,3 +174,78 @@ body.activity-open{overflow:hidden}
 /* ASTR4 v9 · Production room */
 .production-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(250px,.85fr);gap:14px;align-items:start}.production-layout main,.production-layout aside{display:grid;gap:14px;min-width:0}.production-stage{border:1px solid rgba(193,155,243,.17);border-radius:15px;background:rgba(10,8,16,.52);margin-top:9px;overflow:hidden}.production-stage summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;cursor:pointer}.production-stage summary::-webkit-details-marker{display:none}.production-stage summary span{display:grid;gap:4px}.production-stage summary b{font-size:13px}.production-stage summary small{font-size:10px;color:var(--muted)}.production-stage summary i{font-style:normal;font-size:10px;font-weight:800;color:#dfcaff;border:1px solid #63478a;border-radius:30px;padding:6px 9px}.production-checks{padding:0 13px 12px;display:grid;gap:7px}.production-check{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:11px;background:rgba(255,255,255,.025);font-size:11px;line-height:1.5;color:#d9d0e5}.production-check input,.chain-item input{accent-color:#b98aff;width:16px;height:16px;flex:none;margin:1px 0 0}.chain-list{display:grid;gap:8px}.chain-item{display:flex;gap:11px;align-items:flex-start;padding:12px;border:1px solid rgba(193,155,243,.13);border-radius:13px;background:rgba(8,6,13,.45)}.chain-item>span:nth-of-type(2){display:grid;gap:4px}.chain-item b{font-size:12px}.chain-item small{font-size:10px;line-height:1.5;color:var(--muted)}.chain-num{font:700 11px 'Space Grotesk';color:#c9a2ff;padding-top:2px}.delivery-spec{display:grid;gap:4px;padding:12px 0;border-bottom:1px solid rgba(193,155,243,.13)}.delivery-spec b{font-size:12px}.delivery-spec span{font-size:10px;color:var(--muted);line-height:1.55}.production-note{padding:13px 0;border-top:1px solid rgba(193,155,243,.13)}.production-note>div{display:flex;justify-content:space-between;gap:10px;align-items:center}.production-note b{font-size:12px}.production-note small{font-size:9px;color:var(--muted)}.production-note p{font-size:11px;line-height:1.6;color:#d7cde3;margin:8px 0}.studio-actions{flex-wrap:wrap}
 @media(max-width:680px){.production-layout{grid-template-columns:1fr}.production-layout aside{grid-template-columns:1fr}.production-stage summary{padding:12px}.production-check{font-size:10px}.production-layout .upgrade-panel{padding:15px}}
+
+
+/* ASTR4 v10 — responsive navigation + desktop/iPhone layout */
+:root{--astr4-nav-height:74px}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{overscroll-behavior-x:none}
+.app-shell{width:100%;max-width:1180px;margin-inline:auto;padding-bottom:calc(var(--astr4-nav-height) + var(--safe-bottom) + 18px)}
+#view{width:100%;min-width:0}
+.bottom-nav{
+  left:50%;right:auto;bottom:0;transform:translateX(-50%);
+  width:min(100%,1180px);max-width:1180px;
+  display:grid;grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:4px;padding:8px 14px calc(8px + var(--safe-bottom));
+  min-height:calc(var(--astr4-nav-height) + var(--safe-bottom));
+  overflow-x:visible;overflow-y:hidden;overscroll-behavior-x:contain;
+  scrollbar-width:thin;scrollbar-color:#76549a #100b18;
+  -webkit-overflow-scrolling:touch;touch-action:pan-x;
+}
+.nav-item{flex:initial;min-width:0;width:100%;min-height:54px;border-radius:13px;gap:4px;padding:6px 5px;white-space:nowrap;}
+.nav-item span{font-size:21px;line-height:22px}
+.nav-item small{font-size:10px;line-height:1.2;white-space:nowrap}
+.nav-item.active{background:linear-gradient(180deg,#a879e21c,#a879e208);box-shadow:inset 0 0 0 1px #bd96ee24}
+.nav-item:focus-visible,.bottom-nav:focus-visible{outline:2px solid #c9a2ff;outline-offset:-3px}
+.topbar{padding-inline:clamp(16px,3vw,34px)}
+main{padding:clamp(18px,3vw,34px) clamp(15px,3vw,30px) 38px}
+
+/* Tablet and phone: the bar becomes a true touch-scroll rail. */
+@media(max-width:760px){
+  :root{--astr4-nav-height:68px}
+  .app-shell{max-width:100%;padding-bottom:calc(var(--astr4-nav-height) + var(--safe-bottom) + 14px)}
+  .bottom-nav{
+    width:100%;max-width:none;left:0;right:0;transform:none;
+    display:flex;align-items:stretch;justify-content:flex-start;
+    gap:5px;padding:6px 10px calc(6px + var(--safe-bottom));
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+    scroll-padding-inline:10px;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;touch-action:pan-x;
+  }
+  .bottom-nav::-webkit-scrollbar{display:none}
+  .bottom-nav .nav-item{
+    flex:0 0 76px;width:76px;min-width:76px;min-height:54px;
+    scroll-snap-align:center;border-radius:12px;padding:5px 3px;
+  }
+  .nav-item span{font-size:20px;line-height:21px}
+  .nav-item small{font-size:9px}
+  .topbar{height:62px;padding-inline:15px}
+  main{padding:18px 14px 28px}
+  .grid,.activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:390px){
+  .bottom-nav{gap:3px;padding-inline:7px}
+  .bottom-nav .nav-item{flex-basis:70px;width:70px;min-width:70px}
+  main{padding-inline:12px}
+  .topbar{padding-inline:12px}
+  .brand{gap:8px;font-size:19px}
+  .brand-mark{width:35px;height:35px}
+  .grid,.activity-grid,.notes-grid{grid-template-columns:1fr}
+  .stat-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Desktop: use the full canvas and show all navigation destinations at once. */
+@media(min-width:761px){
+  .app-shell{max-width:1180px}
+  .bottom-nav{border:1px solid #392950;border-bottom:0;border-radius:18px 18px 0 0;}
+  .nav-item{max-width:150px;justify-self:stretch}
+  .nav-item:hover{background:#ffffff08;color:#e5d4fa}
+  main{padding-top:30px}
+  .grid,.activity-grid,.notes-grid{gap:16px}
+}
+@media(min-width:1100px){
+  .app-shell{max-width:1280px}
+  .bottom-nav{max-width:1280px}
+  main{padding-inline:36px}
+}
+@media(prefers-reduced-motion:reduce){.bottom-nav{scroll-behavior:auto}}
